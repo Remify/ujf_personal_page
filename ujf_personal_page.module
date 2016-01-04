@@ -1,0 +1,739 @@
+<?php
+
+function ujf_personal_page_form_alter(&$form, &$form_state, $form_id){
+
+	if ($form_id == 'user_profile_form') {
+
+		$page_user = menu_get_object('user');
+
+		if(is_numeric($form['field_id_biper']['und'][0]['value']['#default_value'])){
+			$id_biper = $form['field_id_biper']['und'][0]['value']['#default_value'];
+		}else {
+			$id_biper=null;
+		}
+
+		
+
+		// Hook Publications à la une
+		if($page_user->data['biblio_contributor_id'] != 0) {
+
+			$view = views_get_view('view_ujf_personal_page');
+			$view->set_display('list_by_authorid');
+			$view->set_arguments(array($page_user->data['biblio_contributor_id']));
+			// change the amount of items to show
+			$view->pre_execute();
+			$view->execute();
+			$objects = $view->result;
+
+			//Get the field publi
+			$info = field_info_field('field_user_publi_une');
+
+			//Get a reference to the values
+			$values = &$info['settings']['allowed_values'];
+
+			foreach($objects as $object) {
+				if(!array_key_exists($object->nid, $values)){
+					// ajoute aux valueurs autorisés, sinon bug
+					$values[$object->nid] = $object->node_title;
+				}
+			}
+
+			$option_arr = array();
+			foreach($objects as $object) {
+				$option_arr[$object->nid] = $object->node_title;
+			}
+
+			$form['field_user_publi_une']['und']['#options'] = $option_arr;
+
+			//Save the field
+			field_update_field($info);
+		}
+		else {
+			unset($form['field_user_publi_une']);
+		}
+
+
+		// Modif du champ Id_Biper
+		// Empêche la modification si pas les droits
+		if(!user_access('administrer id_biper')){
+			$form['field_id_biper']['und'][0]['#disabled'] = TRUE;
+		}
+
+		$form['personal_page_fields'] = array(
+			'#type' => 'fieldset',
+			'#title' => t('Page personnelle'),
+			'#weight' => -20,
+			'#collapsible' => true,
+			'#collapsed' => false,
+		);
+
+
+
+  		$form['personal_page_fields']['field_user_publier'] = $form['field_user_publier'];
+
+  		$form['personal_page_fields']['field_user_publi_une'] = $form['field_user_publi_une'];
+
+		$form['field_user_nom']['#weight'] = 0;
+  		$form['personal_page_fields']['field_user_nom'] = $form['field_user_nom'];
+		$form['personal_page_fields']['field_user_nom']['und'][0]['#disabled'] = TRUE;
+
+		$form['field_user_prenom']['#weight'] = 1;
+		$form['personal_page_fields']['field_user_prenom'] = $form['field_user_prenom'];
+		$form['personal_page_fields']['field_user_prenom']['und'][0]['#disabled'] = TRUE;
+
+		$form['personal_page_fields']['field_sous_titre'] = $form['field_sous_titre'];
+
+		$form['personal_page_fields']['field_user_mail'] = $form['field_user_mail'];
+		$form['personal_page_fields']['field_user_mail']['und'][0]['#disabled'] = TRUE;
+
+		$form['personal_page_fields']['field_user_phone'] = $form['field_user_phone'];
+		$form['personal_page_fields']['field_user_phone']['und'][0]['#disabled'] = TRUE;
+
+
+		$form['personal_page_fields']['field_user_batiment'] = $form['field_user_batiment'];
+		$form['personal_page_fields']['field_user_batiment']['und'][0]['#disabled'] = TRUE;
+
+
+		$form['personal_page_fields']['field_user_bureau'] = $form['field_user_bureau'];
+		$form['personal_page_fields']['field_user_bureau']['und'][0]['#disabled'] = TRUE;
+
+
+		$form['personal_page_fields']['field_user_libelle_website'] = $form['field_user_libelle_website'];
+		$form['personal_page_fields']['field_user_website'] = $form['field_user_website'];
+
+		$form['personal_page_fields']['field_user_body'] = $form['field_user_body'];
+
+		// $form['personal_page_fields']['field_equipe'] = $form['field_equipe'];
+		// $form['personal_page_fields']['field_equipe']['und'][0]['#disabled'] = TRUE;
+
+		if(user_access('administrer id_biper')){
+			$form['personal_page_fields']['field_id_biper'] = $form['field_id_biper'];
+		}
+
+
+
+		$form['account']['name']['#title'] = 'Nom affiché dans le titre';
+		$form['account']['name']['#description'] = '';
+
+		unset($form['field_user_publier']);
+		unset($form['field_user_publi_une']);
+		unset($form['field_user_body']);
+		unset($form['field_id_biper']);
+		unset($form['field_equipe']);
+		unset($form['field_sous_titre']);
+		unset($form['field_user_nom']);
+		unset($form['field_user_prenom']);
+		unset($form['field_user_phone']);
+		unset($form['field_user_batiment']);
+		unset($form['field_user_mail']);
+		unset($form['field_user_website']);
+		unset($form['field_user_libelle_website']);
+		unset($form['field_user_bureau']);
+		unset($form['field_user_equipe_reference']);
+		unset($form['field_equipe']);
+
+
+		if(user_access('administrer page perso')){
+
+
+		}else {
+			unset($form['field_user_status']);
+			if($page_user->field_user_status['und'][0]['value'] === '0'){
+				unset($form['personal_page_fields']);
+				$page_user->data['overlay'] = 0;
+
+				drupal_set_message('Vous n\'êtes pas autorisés à utiliser les fonctionnalités "page personnel".', 'warning');
+			}
+		}
+
+
+		if(user_access('administrer id_biper')){
+			$form['personal_page_fields']['user_biper_update'] = array(
+				'#type' => 'button',
+				'#value' => t('Charger les informations Biper'),
+				'#executes_submit_callback' => TRUE,
+				'#weight' => 100,
+				'#submit' => array('ujf_personal_page_user_biper_update'),
+				// '#process' => array('ujf_personal_page_user_biper_update'),
+				'#attributes' => array('uid' => $page_user->uid,'id_biper' => $id_biper),
+				'#prefix' => '<div class="form-item ">',
+				'#suffix' => '</div>',
+			);
+		}else{
+			if(isset($id_biper) && user_access('administrer id_biper')) {
+				$form['personal_page_fields']['user_biper_update'] = array(
+				'#type' => 'button',
+				'#value' => t('Charger mes informations Biper'),
+				'#executes_submit_callback' => TRUE,
+				'#weight' => 100,
+				'#submit' => array('ujf_personal_page_user_biper_update'),
+				// '#process' => array('ujf_personal_page_user_biper_update'),
+				'#attributes' => array('uid' => $page_user->uid,'id_biper' => $id_biper),
+				'#prefix' => '<div class="form-item ">',
+				'#suffix' => '</div>',
+				);
+			}
+		}
+
+		// $form['field_id_biper']['#element_validate'][] = 'ujf_personal_page_validate_field_id_biper';
+		$form['#after_build'][] = '_ujf_personal_page_after_build_user_profile_form';
+    }
+
+	// Modifie le style d'image par default de la photo de profil.
+	if($form_id == 'user_admin_settings'){
+		$form['personalization']['pictures']['settings']['user_picture_style']['#default_value'] = 'medium';
+	}
+
+}
+
+function ujf_personal_page_permission() {
+	return array(
+		'administrer id_biper' => array(
+			'title' => t('Modifier l\'identifiant Biper'),
+			'description' => t('Autorise la modification des identifiants biper sur les pages utilisateur.'),
+		),
+		'administrer page perso' => array(
+			'title' => t('Administrer les pages personnelles'),
+			'description' => t('Autorise la modification des pages personnelles.'),
+		),
+
+	);
+
+	return array(
+        'create new equipe'=>array(
+            'title'=>t('create new equipe'),
+            'description'=>t('create new equipe'),),
+
+    );
+}
+
+
+/*
+*		Supprimer l'affichage des labels
+*/
+function ujf_personal_page_field_display_alter(&$display, $context) {
+
+	if ($context ['entity_type'] == 'user') {
+
+		if($context['field']['field_name'] == 'field_user_nom') {
+			$display ['label'] = 'hidden';
+		}
+
+		if($context['field']['field_name'] == 'field_user_prenom') {
+			$display ['label'] = 'hidden';
+		}
+
+		if($context['field']['field_name'] == 'field_id_biper') {
+			$display = 'hidden';
+		}
+
+		if($context['field']['field_name'] == 'field_sous_titre') {
+			$display ['label'] = 'hidden';
+		}
+
+		if($context['field']['field_name'] == 'field_user_phone') {
+			$display ['label'] = 'hidden';
+		}
+
+		if($context['field']['field_name'] == 'field_user_mail') {
+			$display ['label'] = 'hidden';
+		}
+
+		if($context['field']['field_name'] == 'field_user_website') {
+			$display ['label'] = 'hidden';
+		}
+
+		if($context['field']['field_name'] == 'field_user_libelle_website') {
+			$display ['label'] = 'hidden';
+		}
+
+		if($context['field']['field_name'] == 'field_user_bureau') {
+			$display ['label'] = 'hidden';
+		}
+
+		if($context['field']['field_name'] == 'field_user_batiment') {
+			$display ['label'] = 'hidden';
+		}
+
+		if($context['field']['field_name'] == 'field_user_body') {
+			$display ['label'] = 'hidden';
+		}
+
+		if($context['field']['field_name'] == 'field_user_publi_une') {
+			$display ['label'] = 'hidden';
+		}
+
+		if($context['field']['field_name'] == 'field_user_equipe_reference') {
+			$display ['label'] = 'hidden';
+		}
+
+	}
+}
+
+/**
+ * Implements hook_insert().
+ * Changer Alias des pages users si chercheurs
+ */
+function ujf_personal_page_insert($node) {
+    // Set the URL alias
+    // if (empty($node->path['alias'])) {
+        // $node->path['alias'] = 'slug/' . $node->nid;
+    // }
+
+	// dpm($node);
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ * Pour charger la page user dans le module
+ */
+function ujf_personal_page_theme_registry_alter(&$theme_registry) {
+    // Defined path to the current module.
+    $module_path = drupal_get_path('module', 'ujf_personal_page');
+    // Find all .tpl.php files in this module's folder recursively.
+    $template_file_objects = drupal_find_theme_templates($theme_registry, '.tpl.php', $module_path);
+    // Iterate through all found template file objects.
+    foreach ($template_file_objects as $key => $template_file_object) {
+        // If the template has not already been overridden by a theme.
+        if (!isset($theme_registry[$key]['theme path']) || !preg_match('#/themes/#', $theme_registry[$key]['theme path'])) {
+            // Alter the theme path and template elements.
+            $theme_registry[$key]['theme path'] = $module_path;
+            $theme_registry[$key] = array_merge($theme_registry[$key], $template_file_object);
+            $theme_registry[$key]['type'] = 'module';
+        }
+    }
+}
+
+
+/**
+ *	TODO
+ * Implements hook_user_login().
+ */
+function ujf_personal_page_user_login(&$edit, $account) {
+
+
+	// Looking for Id_Biper
+	// Si non -> récupération ldap
+	if(isset($account->cas_name)){
+			module_load_include('module', 'cas_ldap', 'cas_ldap');
+			$ldap_attr = cas_ldap_attributes($account->cas_name);
+			$value;
+			if(isset($ldap_attr['aglnorganizationuid'])){
+				foreach($ldap_attr['aglnorganizationuid'] as $arr=>$orgUid){
+
+					if(stripos($orgUid, 'biper-') === 0){
+						$value = substr($orgUid, 6);
+
+					}
+				}
+
+
+				$edit['field_id_biper'] =array(
+						'und' => array(
+							0 => array(
+								'value' => $value,
+							),
+						),
+					);
+
+				// user_save($account, $edit);
+
+				// ujf_personal_page_user_biper_update($form, $form_state);
+			}
+	}
+		if(isset($edit['field_id_biper']['und'][0]['value'])) {
+			$id_biper = $edit['field_id_biper']['und'][0]['value'];
+		}
+		else {
+			$id_biper = $account->field_id_biper['und'][0]['value'];
+		}
+
+	// MAJ Info personne
+	if(module_load_include('module', 'ujf_biper', 'ujf_biper') && isset($id_biper)){
+		$is_allowed = false;
+		$struct_allowed = unserialize(EQUIPES);
+
+		$data;
+		foreach(get_user_data($id_biper) as $lieu){
+
+			if(isset($struct_allowed[$lieu->structure_pale_id])){
+				$data = $lieu;
+			}
+		}
+
+		// MAJ profile
+
+		// Nom
+		$edit['field_user_nom'] = array(
+				'und' => array(
+					0 => array(
+						'value' => $data->nom_usuel,
+					),
+				),
+			);
+
+
+		// Prenom
+		$edit['field_user_prenom'] = array(
+				'und' => array(
+					0 => array(
+						'value' => ucfirst(strtolower($data->prenom)),
+					),
+				),
+			);
+
+
+		// Phone
+		$edit['field_user_phone'] = array(
+				'und' => array(
+					0 => array(
+						'value' => $data->telephone,
+					),
+				),
+			);
+
+
+		// Bureau
+		$edit['field_user_bureau'] = array(
+				'und' => array(
+					0 => array(
+						'value' => $data->bureau,
+					),
+				),
+			);
+
+
+
+		// Batiment
+		$edit['field_user_batiment'] = array(
+				'und' => array(
+					0 => array(
+						'value' => $data->batiment,
+					),
+				),
+			);
+
+
+
+		// Website
+		$edit['field_user_website'] = array(
+				'und' => array(
+					0 => array(
+						'value' => $data->site_web_url_1,
+					),
+				),
+			);
+
+
+
+
+		// Libellé Website
+		$edit['field_user_libelle_website'] = array(
+				'und' => array(
+					0 => array(
+						'value' => $data->site_web_libelle_1,
+					),
+				),
+			);
+
+
+
+
+		// Mail
+		$edit['field_user_mail'] = array(
+				'und' => array(
+					0 => array(
+						'value' => $data->mail,
+					),
+				),
+			);
+
+
+
+		// TO FIX
+		if(module_load_include('inc', 'ujf_biper', 'biper.equipe') && module_load_include('inc', 'ujf_biper', 'config')){
+			$lieux = get_structures_user($id_biper);
+			$struct_allowed = unserialize(EQUIPES);
+
+
+			 if(isset($struct_allowed[$data->structure_pale_id])) {
+				 $is_allowed = true;
+			 }
+
+			if(count(array_intersect($lieux, $struct_allowed)) > 0 && $is_allowed == false) {
+					$is_allowed = true;
+			}
+
+
+
+			if ($is_allowed) {
+
+
+				$edit['field_user_status'] = array(
+						'und' => array(
+						0 => array(
+						'value' => '1',
+							),
+						),
+					);
+				$edit['field_user_publier'] = array(
+						'und' => array(
+						0 => array(
+						'value' => '1',
+							),
+						),
+					);
+
+				// reference user_equipe
+				// To fix
+
+				$equipes_lib = array_intersect($lieux, $struct_allowed);
+
+
+				// requete
+				$query = new EntityFieldQuery;
+				$result = $query
+				  ->entityCondition('entity_type', 'node')
+				  ->entityCondition('bundle', 'ujf_personnal_page_equipe')
+				  ->propertyCondition('title', $equipes_lib, 'like')
+				  ->propertyCondition('status', 1)
+				  ->execute();
+
+				if (isset($result['node'])) {
+					$news_items_nids = array_keys($result['node']);
+				}
+
+				$options = array();
+				foreach ($news_items_nids as $key => $var) {
+					$options[] = array('nid' => (string)$var);
+				}
+
+
+
+				$edit['field_user_equipe_reference'] = array(
+							'und' => $options
+				);
+			}
+			else {
+				$edit['field_user_status'] = array(
+						'und' => array(
+						0 => array(
+						'value' => '0',
+							),
+						),
+					);
+				$edit['field_user_publier'] = array(
+						'und' => array(
+						0 => array(
+						'value' => '0',
+							),
+						),
+					);
+			}
+		}
+
+
+	}
+	user_save($account, $edit);
+
+	if($is_allowed) {
+		// Ajout du role Page_Perso à l'utilisateur
+		$role = user_role_load_by_name("Page_Perso");
+		user_multiple_role_edit(array($account->uid), 'add_role', $role->rid);
+	}
+}
+
+function ujf_personal_page_user_insert(&$edit, $account, $category) {
+	// $id_biper = $account->field_id_biper['und'][0]['value'];
+
+	// if ($account->is_new){
+		// module_load_include('module', 'cas_ldap', 'cas_ldap');
+		// $ldap_attr = cas_ldap_attributes($account->cas_name);
+
+		// $value;
+		// if(isset($ldap_attr['aglnorganizationuid'])){
+			// foreach($ldap_attr['aglnorganizationuid'] as $arr=>$orgUid){
+					// if(stripos($orgUid, 'biper-') === 0){
+						// $value = substr($orgUid, 6);
+					// }
+			// }
+			// $edit['is_new'] = 0;
+			// $edit['field_id_biper']['und'][0]['value'] = $value;
+			// $edit['field_user_publier']['und'][0]['value'] = 0;
+
+			// user_save($account, $edit);
+		// }
+	// }
+
+}
+
+
+
+/**
+ * Implements hook_views_api().
+ */
+
+ function ujf_personal_page_views_api() {
+    return array (
+	'api' => 3.0,
+	'path' => drupal_get_path('module', 'ujf_personal_page'),);
+ }
+
+ function ujf_personal_page_user_biper_update($form, &$form_state) {
+
+	$account = $form['#user'];
+	$id_biper = $account->field_id_biper['und'][0]['safe_value'];
+
+	if(module_load_include('module', 'ujf_biper', 'ujf_biper') && isset($id_biper)){
+		$data = array_shift(get_user_data($id_biper));
+
+		// MAJ profile
+		$edit = array(
+			// Phone
+			'field_user_phone' => array(
+				'und' => array(
+					0 => array(
+					'value' => $data->telephone,
+					),
+				),
+			),
+			// Bureau
+			'field_user_bureau' => array(
+				'und' => array(
+					0 => array(
+					'value' => $data->bureau,
+					),
+				),
+			),
+			// Batiment
+			'field_user_batiment' => array(
+				'und' => array(
+					0 => array(
+					'value' => $data->batiment,
+					),
+				),
+			),
+
+			// Website
+			'field_user_website' => array(
+				'und' => array(
+					0 => array(
+					'value' => $data->site_web_url_1,
+					),
+				),
+			),
+
+			// Mail
+			'field_user_mail' => array(
+				'und' => array(
+					0 => array(
+					'value' => $data->mail,
+					),
+				),
+			),
+		);
+
+		user_save($account, $edit);
+	}
+	else {
+		if(isset($account->cas_name)){
+			module_load_include('module', 'cas_ldap', 'cas_ldap');
+			$ldap_attr = cas_ldap_attributes($account->cas_name);
+			$value;
+			if(isset($ldap_attr['aglnorganizationuid'])){
+				foreach($ldap_attr['aglnorganizationuid'] as $arr=>$orgUid){
+
+					if(stripos($orgUid, 'biper-') === 0){
+						$value = substr($orgUid, 6);
+
+					}
+				}
+
+				$edit = array(
+					'field_id_biper' => array(
+						'und' => array(
+							0 => array(
+								'value' => $value,
+							),
+						),
+					),
+				);
+				user_save($account, $edit);
+				// ujf_personal_page_user_biper_update($form, $form_state);
+			}
+		}
+	}
+
+	// $form_state['redirect'] = 'user/' . $account->uid . '/edit';
+	// return $form;
+ }
+
+// function ujf_personal_page_validate_field_id_biper($element, &$form_state) {
+	// if(strpos($form_state['values']['field_id_biper']['und'][0]['value'], 'biper-')){
+		// $form_state['values']['field_id_biper']['und'][0]['value'] = substr($form_state['values']['field_id_biper']['und'][0]['value'], 6);
+	// }
+// }
+
+
+
+/**
+ * Implements hook_tokens().
+ */
+// function cas_ldap_tokens($type, $tokens, array $data = array(), array $options = array()) {
+  // $sanitize = !empty($options['sanitize']);
+  // $replacements = array();
+
+  // if ($type == 'cas' && !empty($data['cas'])) {
+    // $cas = $data['cas'];
+
+    // Provide [cas:attribute:?] dynamic tokens.
+    // if ($attribute_tokens = token_find_with_prefix($tokens, 'ldap')) {
+      // $attribute = cas_ldap_attributes($cas);
+      // foreach ($attribute_tokens as $name => $original) {
+        // $name = drupal_strtolower($name);
+        // if (isset($attribute[$name])) {
+          // $value = $attribute[$name];
+          // if (is_array($value)) {
+            // foreach($value as $orgUid){
+				// if(!strpos($orgUid, 'biper-')){
+					// $value = $orgUid;
+				// }
+				// else {
+					// $value = $value[0];
+				// }
+			// }
+          // }
+          // $replacements[$original] = $sanitize ? check_plain($value) : $value;
+        // }
+        // elseif ($name == '?') {
+          // $keys = array_keys($attribute);
+          // if ($sanitize) {
+            // $keys = array_map('check_plain', $keys);
+          // }
+          // $replacements[$original] = t('Available attributes: %keys', array('%keys' => implode(', ', $keys)));
+        // }
+      // }
+    // }
+  // }
+
+  // return $replacements;
+// }
+
+
+
+/**
+ * Custom after build function
+ **/
+function _ujf_personal_page_after_build_user_profile_form($form, &$form_state) {
+
+	$page_user = $form['#user'];
+  if($page_user->field_user_status['und'][0]['value'] === '1' || user_access('administrer page perso') == false){
+		unset($form['biblio_fieldset']);
+	}
+
+  return $form;
+}
+
+
+
+?>

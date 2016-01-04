@@ -1,0 +1,16 @@
+name = UJF Personal Page
+description = Creer une page personnel pour les utilisateurs
+core = 7.x
+package = Content
+
+version = 7.x-1.0
+dependencies[] = ujf_biper
+dependencies[] = biblio
+dependencies[] = cas_ldap
+
+
+files[] = ujf_personal_page.module
+files[] = ujf_personal_page.install
+files[] = ujf_personal_page.views.inc
+files[] = template/user-profile.tpl.php
+files[] = template/css/user-profile.css

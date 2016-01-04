@@ -1,0 +1,11 @@
+{
+  "uploadOnSave": true,
+  "hostname": "oum.ujf-grenoble.fr",
+  "target": "site-labos-drupal-preprod/sites/gin/modules/ujf_personal_page",
+  "ignore": [
+    ".git/**"
+  ],
+  "username": "bouguerr",
+  "password": "68Tpb1!p",
+  "transport": "scp"
+}

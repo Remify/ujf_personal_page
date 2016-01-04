@@ -1,0 +1,98 @@
+.user-profile-wrapper {
+	padding: 10px;
+	float:left;
+}
+
+.user-profile-wrapper .user-profile-pic {
+	float:left;
+	margin-right:20px;
+	width:25%;
+}
+
+.user-profile-wrapper .user-profile-pic img {
+	width: 200px;
+	height: 200px;
+}
+
+.user-profile-wrapper .user-profile-info {
+	float: left;
+	width:33%;
+}
+
+.user-profile-wrapper .user-profile-info-nom h3{
+	margin:0;
+	border:0;
+}
+
+.user-profile-wrapper .user-profile-info-nom .field-name-field-user-prenom {
+	float:left;
+}
+
+.user-profile-wrapper .user-profile-info-nom .field-name-field-user-prenom {
+	float:left;
+}
+
+.user-profile-wrapper .user-profile-info-sous-titre {
+color:#474747;
+padding:0 0 5px 0;
+margin-bottom: 5px;
+border-bottom: 1px solid #efefef;
+min-height:2em;
+}
+
+.user-profile-wrapper .user-profile-info-contact {
+	padding-bottom: 5px;
+	margin-bottom: 5px;
+	border-bottom: 1px solid #efefef;
+	float:left;
+	width: 100%;
+}
+
+.user-profile-wrapper .user-profile-content {
+float:inherit;
+clear:both;
+}
+
+.user-profile-wrapper .field-item {
+padding :3px 0;
+}
+
+.user-profile-wrapper {
+  width: 100%;
+}
+
+.user-profile-wrapper .user-profile-content{
+  width: initial;
+  padding:10px;
+  margin-top: 30px;
+  border-top: 1px;
+  border-top-style: groove;
+  border-top-width: thin;
+}
+
+/* BIBLIO */
+
+
+.user-profile-wrapper .user-profile-biblio  {
+padding:0 10px;
+width:37%;
+float:left;
+}
+
+.user-profile-wrapper .user-profile-biblio  h3{
+margin-top:0px;
+padding-bottom:2em;
+border-bottom:1px solid #efefef;
+}
+
+
+.user-profile-wrapper .user-profile-biblio .view-biblio-views .views-row{
+padding:5px 0;
+text-align: justify;
+}
+
+.user-profile-biblio-link {
+	margin-top:20px;
+	text-align:right;
+}
+

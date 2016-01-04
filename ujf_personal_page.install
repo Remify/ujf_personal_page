@@ -1,0 +1,573 @@
+<?php
+
+/**
+ * Update hook to add a field to a node.
+ */
+function ujf_personal_page_install() {
+  
+  // FIELD EQUIPE
+   if (!field_info_field('field_equipe')) {
+	$field_name = 'field_equipe';
+    $field = array(
+        'field_name' => $field_name, 
+        'type' => 'list_text', 
+        'options' => 'options_buttons',
+		'settings' => array(
+			'allowed_values' => array()
+		),
+    );
+    field_create_field($field);
+
+    // Create the instance on the bundle.
+    $instance = array(
+        'field_name' => $field_name, 
+        'entity_type' => 'user', 
+        'label' => 'Equipe', 
+        'bundle' => 'user', 
+        // If you don't set the "required" property then the field wont be required by default.
+        'required' => FALSE,
+        'settings' => array(
+           // Here you inform either or not you want this field showing up on the registration form.
+            'user_register_form' => 0,
+        ),
+        'widget' => array(
+            'type' => 'options_buttons',
+            'weight' => '15',
+        ), 
+    );
+    field_create_instance($instance);
+  }  
+  
+	// FIELD MAIL.
+	if (!field_info_field('field_user_mail')) {
+	$field_name = 'field_user_mail';
+	$field = array(
+		'field_name' => $field_name, 
+		'type' => 'text', 
+		'active' => FALSE,
+	);
+	field_create_field($field);
+
+	// Create the instance on the bundle.
+	$instance = array(
+		'field_name' => $field_name, 
+		'entity_type' => 'user', 
+		'label' => 'Adresse email',
+		'bundle' => 'user',
+		// If you don't set the "required" property then the field wont be required by default.
+		'required' => FALSE,
+		'settings' => array(
+		   // Here you inform either or not you want this field showing up on the registration form.
+			'user_register_form' => 0,
+		),
+		'widget' => array(
+			'type' => 'textfield',
+			'weight' => '4',
+		), 
+	);
+	
+	field_create_instance($instance);
+	}  
+  
+	// FIELD phone.
+	if (!field_info_field('field_user_phone')) {
+	$field_name = 'field_user_phone';
+	$field = array(
+		'field_name' => $field_name, 
+		'type' => 'text', 
+		'active' => FALSE,
+	);
+	field_create_field($field);
+
+	// Create the instance on the bundle.
+	$instance = array(
+		'field_name' => $field_name, 
+		'entity_type' => 'user', 
+		'label' => 'Telephone',
+		'bundle' => 'user',
+		// If you don't set the "required" property then the field wont be required by default.
+		'required' => FALSE,
+		'settings' => array(
+		   // Here you inform either or not you want this field showing up on the registration form.
+			'user_register_form' => 0,
+		),
+		'widget' => array(
+			'type' => 'textfield',
+			'weight' => '5',
+		), 
+	);
+	
+	field_create_instance($instance);
+	}
+	
+	
+	// FIELD Website.
+	if (!field_info_field('field_user_website')) {
+	$field_name = 'field_user_website';
+	$field = array(
+		'field_name' => $field_name, 
+		'type' => 'text', 
+		'active' => FALSE,
+	);
+	field_create_field($field);
+
+	// Create the instance on the bundle.
+	$instance = array(
+		'field_name' => $field_name, 
+		'entity_type' => 'user', 
+		'label' => 'Site Web',
+		'bundle' => 'user',
+		// If you don't set the "required" property then the field wont be required by default.
+		'required' => FALSE,
+		'settings' => array(
+		   // Here you inform either or not you want this field showing up on the registration form.
+			'user_register_form' => 0,
+		),
+		'widget' => array(
+			'type' => 'textfield',
+			'weight' => '7',
+		), 
+	);
+	
+	field_create_instance($instance);
+	}
+  
+	
+	// FIELD libelle Website.
+	if (!field_info_field('field_user_libelle_website')) {
+	$field_name = 'field_user_libelle_website';
+	$field = array(
+		'field_name' => $field_name, 
+		'type' => 'text', 
+		'active' => FALSE,
+	);
+	field_create_field($field);
+
+	// Create the instance on the bundle.
+	$instance = array(
+		'field_name' => $field_name, 
+		'entity_type' => 'user', 
+		'label' => 'Libellé du site web',
+		'bundle' => 'user',
+		// If you don't set the "required" property then the field wont be required by default.
+		'required' => FALSE,
+		'settings' => array(
+		   // Here you inform either or not you want this field showing up on the registration form.
+			'user_register_form' => 0,
+		),
+		'widget' => array(
+			'type' => 'textfield',
+			'weight' => '7',
+		), 
+	);
+	
+	field_create_instance($instance);
+	}
+  
+	
+	// FIELD Bureau.
+	if (!field_info_field('field_user_bureau')) {
+	$field_name = 'field_user_bureau';
+	$field = array(
+		'field_name' => $field_name, 
+		'type' => 'text', 
+		'active' => FALSE,
+	);
+	field_create_field($field);
+
+	// Create the instance on the bundle.
+	$instance = array(
+		'field_name' => $field_name, 
+		'entity_type' => 'user', 
+		'label' => 'Bureau',
+		'bundle' => 'user',
+		// If you don't set the "required" property then the field wont be required by default.
+		'required' => FALSE,
+		'settings' => array(
+		   // Here you inform either or not you want this field showing up on the registration form.
+			'user_register_form' => 0,
+		),
+		'widget' => array(
+			'type' => 'textfield',
+			'weight' => '6',
+		), 
+	);
+	
+	field_create_instance($instance);
+	}
+	
+	
+	// FIELD Batiment.
+	if (!field_info_field('field_user_batiment')) {
+	$field_name = 'field_user_batiment';
+	$field = array(
+		'field_name' => $field_name, 
+		'type' => 'text', 
+		'active' => FALSE,
+	);
+	field_create_field($field);
+
+	// Create the instance on the bundle.
+	$instance = array(
+		'field_name' => $field_name, 
+		'entity_type' => 'user', 
+		'label' => 'Batiment',
+		'bundle' => 'user',
+		// If you don't set the "required" property then the field wont be required by default.
+		'required' => FALSE,
+		'settings' => array(
+		   // Here you inform either or not you want this field showing up on the registration form.
+			'user_register_form' => 0,
+		),
+		'widget' => array(
+			'type' => 'textfield',
+			'weight' => '6',
+		), 
+	);
+	
+	field_create_instance($instance);
+	}
+  
+  // Make sure the field doesn't already exist.
+   if (!field_info_field('field_id_biper')) {
+	$field_name = 'field_id_biper';
+    $field = array(
+        'field_name' => $field_name, 
+        'type' => 'text', 
+		'active' => FALSE,
+    );
+    field_create_field($field);
+
+    // Create the instance on the bundle.
+    $instance = array(
+        'field_name' => $field_name, 
+        'entity_type' => 'user', 
+        'label' => 'Identifiant Biper',
+        'bundle' => 'user',
+        // If you don't set the "required" property then the field wont be required by default.
+        'required' => FALSE,
+		'settings' => array(
+           // Here you inform either or not you want this field showing up on the registration form.
+            'user_register_form' => 0,
+        ),
+        'widget' => array(
+            'type' => 'textfield',
+            'weight' => '4',
+        ), 
+    );
+    field_create_instance($instance);
+  }
+  
+  // Make sure the field doesn't already exist.
+   if (!field_info_field('field_sous_titre')) {
+	$field_name = 'field_sous_titre';
+    $field = array(
+        'field_name' => $field_name, 
+        'type' => 'text', 
+		'active' => FALSE,
+    );
+    field_create_field($field);
+
+    // Create the instance on the bundle.
+    $instance = array(
+        'field_name' => $field_name, 
+        'entity_type' => 'user', 
+        'label' => 'Sous titre',
+        'bundle' => 'user',
+        // If you don't set the "required" property then the field wont be required by default.
+        'required' => FALSE,
+        'settings' => array(
+           // Here you inform either or not you want this field showing up on the registration form.
+            'user_register_form' => 0,
+        ),
+        'widget' => array(
+            'type' => 'textfield',
+            'weight' => '2',
+        ), 
+    );
+    field_create_instance($instance);
+  }
+  
+  //  Champ body 
+  //  Make sure the field doesn't already exist.
+   if (!field_info_field('field_user_body')) {
+	$field_name = 'field_user_body';
+    $field = array(
+        'field_name' => $field_name, 
+        'label' => t('A propos de moi'), 
+        'type' => 'text_with_summary', 
+		'translatable' => TRUE,
+    );
+    field_create_field($field);
+
+    // Create the instance on the bundle.
+    $instance = array(
+        'field_name' => $field_name, 
+        'entity_type' => 'user', 
+        'label' => t('A propos de moi'),
+        'bundle' => 'user',
+        // If you don't set the "required" property then the field wont be required by default.
+        'required' => FALSE,
+        'settings' => array(
+           // Here you inform either or not you want this field showing up on the registration form.
+            'user_register_form' => 0,
+        ),
+        'widget_type' => 'text_textarea_with_summary', 
+		'weight' => '16',
+	); 
+    field_create_instance($instance);
+  }
+  
+  // FIELD Publier
+   if (!field_info_field('field_user_publier')) {
+	$field_name = 'field_user_publier';
+    $field = array(
+        'field_name' => $field_name, 
+        'type' => 'list_text', 
+		'#default_value'  => 0, 
+        'options' => 'options_buttons',
+		'settings' => array(
+			'allowed_values' => array(1 => 'Oui', 0 => 'Non')
+		),
+    );
+    field_create_field($field);
+
+    // Create the instance on the bundle.
+    $instance = array(
+        'field_name' => $field_name, 
+        'entity_type' => 'user', 
+        'label' => 'Rendre visible votre page personnelle', 
+        'bundle' => 'user', 
+        // If you don't set the "required" property then the field wont be required by default.
+        'required' => TRUE,
+        'settings' => array(
+           // Here you inform either or not you want this field showing up on the registration form.
+            'user_register_form' => 0,
+        ),
+        'widget' => array(
+            'type' => 'options_buttons',
+            'weight' => '17',
+        ), 
+    );
+    field_create_instance($instance);
+  }  
+  
+  // FIELD Publication à la une
+   if (!field_info_field('field_user_publi_une')) {
+	$field_name = 'field_user_publi_une';
+    $field = array(
+        'field_name' => $field_name, 
+        'type' => 'list_text', 
+        'options' => 'options_buttons',
+		'cardinality' => 5,
+		'settings' => array(
+			'allowed_values' => array()
+		),
+    );
+    field_create_field($field);
+
+    // Create the instance on the bundle.
+    $instance = array(
+        'field_name' => $field_name, 
+        'entity_type' => 'user', 
+        'label' => t('Publications à la une'), 
+        'bundle' => 'user', 
+        // If you don't set the "required" property then the field wont be required by default.
+        'required' => FALSE,
+        'settings' => array(
+           // Here you inform either or not you want this field showing up on the registration form.
+            'user_register_form' => 0,
+        ),
+        'widget' => array(
+            'type' => 'options_buttons',
+            'weight' => '4',
+			
+        ), 
+    );
+    field_create_instance($instance);
+  }  
+  
+  
+  // FIELD Status
+   if (!field_info_field('field_user_status')) {
+	$field_name = 'field_user_status';
+    $field = array(
+        'field_name' => $field_name, 
+        'type' => 'list_text', 
+		'#default_value'  => 0, 
+        'options' => 'options_buttons',
+		'settings' => array(
+			'allowed_values' => array(1 => 'Oui', 0 => 'Non')
+		),
+    );
+    field_create_field($field);
+
+    // Create the instance on the bundle.
+    $instance = array(
+        'field_name' => $field_name, 
+        'entity_type' => 'user', 
+        'label' => 'L\'utilisateur est-il autorisé à utilise les fonctionnalités du module page perso ?', 
+        'bundle' => 'user', 
+        // If you don't set the "required" property then the field wont be required by default.
+        'required' => TRUE,
+        'settings' => array(
+           // Here you inform either or not you want this field showing up on the registration form.
+            'user_register_form' => 0,
+        ),
+        'widget' => array(
+            'type' => 'options_buttons',
+            'weight' => '-50',
+        ), 
+    );
+    field_create_instance($instance);
+  } 
+  
+  // Reference Equipe 
+	if(!node_type_load('ujf-personnal-page-equipe')){
+		$field = array(
+		'field_name'=>'field_user_equipe_reference',
+		'label' => 'Equipes',
+		'type' => 'node_reference',
+		'settings'=>array(
+		  'referenceable_types'=>array(
+			'ujf_personnal_page_equipe'=>'ujf_personnal_page_equipe'
+		  ),
+		),
+		'cardinality'=>'-1'
+	  );
+	  field_create_field($field);
+	  $instance = array(
+		'field_name'=>'field_user_equipe_reference',
+		'label'=>'Equipes',
+		'type'=>'node_reference',
+		'widget'=>array(
+		  'type'=>'options_buttons'
+		),
+	  );
+	  $instance['entity_type'] = 'user';
+	  $instance['bundle'] = 'user'; 
+	  field_create_instance($instance);
+	}
+  
+  
+   // See devel output when using site as Anonymous or authenticated user.
+  user_role_change_permissions(DRUPAL_ANONYMOUS_RID, array('access biblio content' => TRUE));
+  user_role_change_permissions(DRUPAL_AUTHENTICATED_RID, array('access biblio content' => TRUE));
+  
+  
+   // Voir les profils utilisateurs
+  user_role_change_permissions(DRUPAL_ANONYMOUS_RID, array('access user profiles' => TRUE));
+  user_role_change_permissions(DRUPAL_AUTHENTICATED_RID, array('access user profiles' => TRUE));
+	
+	
+	// Création du role Page_Perso
+	$role = new stdClass();
+	$role->name = 'Page_Perso';
+	user_role_save($role);
+	
+	$rid_page_perso_role = user_role_load_by_name('Page_Perso')->rid;
+	
+	user_role_change_permissions($rid_page_perso_role, array('change own username' => TRUE));
+}
+
+
+function ujf_personal_page_uninstall(){
+	//suppression des champs et instances
+	
+	// FIELD EQUIPE
+	field_delete_field('field_equipe');
+	
+	if ($instance = field_info_instance('user', 'field_equipe', 'user')) {
+		field_delete_instance($instance);
+	}
+  
+	// FIELD Sous titre
+	field_delete_field('field_sous_titre');
+	
+	if ($instance = field_info_instance('user', 'field_sous_titre', 'user')) {
+		field_delete_instance($instance);
+	}
+  
+	// FIELD ID_BIPER
+	field_delete_field('field_id_biper');
+	
+	if ($instance = field_info_instance('user', 'field_id_biper', 'user')) {
+		field_delete_instance($instance);
+	}
+  
+	// FIELD BODY
+	field_delete_field('field_user_body');
+	
+	if ($instance = field_info_instance('user', 'field_user_body', 'user')) {
+		field_delete_instance($instance);
+	}
+	
+	// FIELD MAIL
+	field_delete_field('field_user_mail');
+	
+	if ($instance = field_info_instance('user', 'field_user_mail', 'user')) {
+		field_delete_instance($instance);
+	}
+	
+	// FIELD Website
+	field_delete_field('field_user_website');
+	
+	if ($instance = field_info_instance('user', 'field_user_website', 'user')) {
+		field_delete_instance($instance);
+	}
+	
+	// FIELD Libelle Website
+	field_delete_field('field_user_libelle_website');
+	
+	if ($instance = field_info_instance('user', 'field_user_libelle_website', 'user')) {
+		field_delete_instance($instance);
+	}
+	
+	// FIELD Bureau
+	field_delete_field('field_user_bureau');
+	
+	if ($instance = field_info_instance('user', 'field_user_bureau', 'user')) {
+		field_delete_instance($instance);
+	}
+	
+	// FIELD Batiment
+	field_delete_field('field_user_batiment');
+	
+	if ($instance = field_info_instance('user', 'field_user_batiment', 'user')) {
+		field_delete_instance($instance);
+	}
+	
+	// FIELD Phone
+	field_delete_field('field_user_phone');
+	
+	if ($instance = field_info_instance('user', 'field_user_phone', 'user')) {
+		field_delete_instance($instance);
+	}
+	
+	// FIELD Publier
+	field_delete_field('field_user_publier');
+	
+	if ($instance = field_info_instance('user', 'field_user_publier', 'user')) {
+		field_delete_instance($instance);
+	}
+	
+	// FIELD Publication à la une
+	field_delete_field('field_user_publi_une');
+	
+	if ($instance = field_info_instance('user', 'field_user_publi_une', 'user')) {
+		field_delete_instance($instance);
+	}
+	
+	// FIELD Status
+	field_delete_field('field_user_status');
+	
+	if ($instance = field_info_instance('user', 'field_user_status', 'user')) {
+		field_delete_instance($instance);
+	}
+}
+
+
+
+
+
+?>
